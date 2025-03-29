@@ -8,7 +8,9 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro # 挂载自定义配置文件
       - ./html:/usr/share/nginx/html # 静态资源目录
+      - ./laravel:/var/www/html # 挂载 Laravel 代码到 Nginx
     depends_on:
+      - laravel
       - app
 
   app:
@@ -20,10 +22,29 @@ services:
     ports:
       - "3000:3000" # 映射本地端口 3000 到容器的端口 3000
     command: "npm start" # 启动 Node.js 应用
-#    command: "npx nodemon index.js" # 启动 Node.js 应用
     depends_on:
       - db
-
+  laravel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+#    image: php:8.2-fpm # 使用 PHP 8.2 FPM 镜像
+    container_name: laravel-backend
+    volumes:
+      - ./laravel:/var/www/html # 挂载 Laravel 代码目录
+    working_dir: /var/www/html # 容器内的工作目录
+    environment:
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_KEY: base64:9bp35LGB3aXAThsBXdzlo8FzY9YaoeC3Ap71ogJhqu8= # 替换为你的 Laravel APP_KEY
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${MYSQL_DATABASE}
+      DB_USERNAME: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+    depends_on:
+      - db
   db:
     image: mysql:8 # 使用 MySQL 8 的镜像
     container_name: mysql-db
