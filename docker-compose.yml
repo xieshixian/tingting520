@@ -20,7 +20,8 @@ services:
   nginx:
     image: nginx:latest
     container_name: laravel_nginx
-    platform: linux/arm64
+#    platform: linux/arm64
+    platform: linux/amd64
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/multi-domain.conf:/etc/nginx/conf.d/multi-domain.conf
@@ -35,7 +36,8 @@ services:
   mysql:
     image: mysql:8.0.41
     container_name: laravel_mysql
-    platform: linux/arm64
+#    platform: linux/arm64
+    platform: linux/amd64
     volumes:
       - ./mysql/my.cnf:/etc/mysql/my.cnf
       - ./mysql_data:/var/lib/mysql
@@ -52,7 +54,8 @@ services:
   redis:
     image: redis:latest
     container_name: laravel_redis
-    platform: linux/arm64
+#    platform: linux/arm64
+    platform: linux/amd64
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
