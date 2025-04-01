@@ -1,6 +1,7 @@
 
 services:
   app:
+    image: docker.io/momoqinghan666/laravel-app:multi-platform
     build:
       context: ./php
       dockerfile: Dockerfile
