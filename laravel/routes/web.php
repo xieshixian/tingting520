@@ -9,6 +9,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/only_update_laravel', function () {
+    return '？DAdasdas';
+});
+
+
+
+
+
+
+
+
+
+
 Route::get('/love/{name}', function ($name) {
     return view('love', ['name' => $name]);
 });
