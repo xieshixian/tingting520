@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     && docker-php-ext-install pdo_mysql zip
 
+
+
 # Install Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
 
@@ -19,13 +21,21 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install Xdebug
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
-# 权限
-RUN mkdir -p /var/www/html/storage && \
-    chown -R www-data:www-data /var/www/html/storage && \
-    chmod -R 775 /var/www/html/storage
-
 # Copy configuration files
 COPY php.ini /usr/local/etc/php/php.ini
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
+# 创建与应用匹配的用户和组（假设宿主机用户 UID=1000, GID=1000）
+ARG USER_ID=1000
+ARG GROUP_ID=1001
+RUN groupadd -g $GROUP_ID appuser && \
+    useradd -u $USER_ID -g $GROUP_ID -d /app -s /bin/bash appuser \
+
 WORKDIR /var/www/html
+RUN chown -R appuser:appuser /var/www/html
+# 在 Dockerfile 中添加针对特定目录的权限修复
+RUN mkdir -p /var/www/html/storage && \
+    chmod -R 775 /var/www/html/storage && \
+    chown -R appuser:appuser /var/www/html/storage
+# 切换用户
+USER appuser
