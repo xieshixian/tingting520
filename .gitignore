@@ -1,2 +1,4 @@
 test.txt
 mysql_data/*
+logs/nginx/*
+logs/php/*
