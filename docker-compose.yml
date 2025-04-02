@@ -5,6 +5,7 @@ services:
     build:
       context: ./php
       dockerfile: Dockerfile
+    user: "1000:1001"  # 设置为主机上的 ubuntu 用户的 UID 和 GID
     container_name: laravel_app
 #    platform: linux/arm64
     volumes:
