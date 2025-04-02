@@ -4,11 +4,7 @@ services:
     image: docker.io/momoqinghan666/laravel-app:multi-platform
     build:
       context: ./php
-      args:
-        USER_ID: 1000  # 与宿主机用户 UID 一致
-        GROUP_ID: 1001 # 与宿主机用户 GID 一致
       dockerfile: Dockerfile
-    user: "appuser:appuser"
     container_name: laravel_app
 #    platform: linux/arm64
     volumes:

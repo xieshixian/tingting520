@@ -25,12 +25,6 @@ RUN pecl install xdebug && docker-php-ext-enable xdebug
 COPY php.ini /usr/local/etc/php/php.ini
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
-# 创建与应用匹配的用户和组（假设宿主机用户 UID=1000, GID=1000）
-ARG USER_ID=1000
-ARG GROUP_ID=1001
-RUN groupadd -g $GROUP_ID appuser && \
-    useradd -u $USER_ID -g $GROUP_ID -d /app -s /bin/bash appuser \
-
 WORKDIR /var/www/html
 RUN chown -R appuser:appuser /var/www/html
 # 在 Dockerfile 中添加针对特定目录的权限修复
