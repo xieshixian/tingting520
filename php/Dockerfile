@@ -26,10 +26,3 @@ COPY php.ini /usr/local/etc/php/php.ini
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 WORKDIR /var/www/html
-RUN chown -R appuser:appuser /var/www/html
-# 在 Dockerfile 中添加针对特定目录的权限修复
-RUN mkdir -p /var/www/html/storage && \
-    chmod -R 775 /var/www/html/storage && \
-    chown -R appuser:appuser /var/www/html/storage
-# 切换用户
-USER appuser
