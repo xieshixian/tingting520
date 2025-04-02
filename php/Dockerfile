@@ -19,6 +19,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install Xdebug
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
+# 权限
+RUN mkdir -p /var/www/html/storage && \
+    chown -R www-data:www-data /var/www/html/storage && \
+    chmod -R 775 /var/www/html/storage
+
 # Copy configuration files
 COPY php.ini /usr/local/etc/php/php.ini
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
