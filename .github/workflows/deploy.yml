@@ -1,0 +1,50 @@
+name: Build and Deploy Laravel Project
+
+on:
+  push:
+    branches:
+      - main  # 当代码推送到 main 分支时触发
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: 打包 Laravel 应用镜像
+      - name: Build Laravel App Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/laravel-app:latest ./php
+          docker tag ${{ secrets.DOCKER_USERNAME }}/laravel-app:latest ${{ secrets.DOCKER_USERNAME }}/laravel-app:${{ github.sha }}
+
+      # Step 3: 推送 Laravel 应用镜像到 Docker Hub
+      - name: Push Laravel App Docker Image
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/laravel-app:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/laravel-app:${{ github.sha }}
+
+      # Step 4: 部署到目标服务器
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v0.1.12
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /var/www/laravel-app
+
+            # 拉取最新代码
+            git pull origin main
+
+            # 拉取最新的 Laravel 应用镜像
+            docker pull ${{ secrets.DOCKER_USERNAME }}/laravel-app:latest
+
+            # 停止并移除现有容器
+            docker-compose down
+
+            # 启动服务
+            docker-compose up -d
